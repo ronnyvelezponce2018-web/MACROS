@@ -1,0 +1,6 @@
+{
+  "name": "NutriBalance — Nutrición, Macros y Actividad Diaria",
+  "description": "Plataforma de control nutricional y actividad física para gestionar peso actual, peso objetivo, comidas diarias, macronutrientes (carbohidratos, proteínas y grasas) y ajuste calórico dinámico por ejercicio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
