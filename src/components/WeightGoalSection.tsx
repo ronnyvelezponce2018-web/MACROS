@@ -33,7 +33,10 @@ export function WeightGoalSection({
   const [logNote, setLogNote] = useState('');
   const [savedFeedback, setSavedFeedback] = useState(false);
 
-  const handleWeightChange = (field: 'currentWeightKg' | 'targetWeightKg', raw: string) => {
+  const handleWeightChange = (
+    field: 'currentWeightKg' | 'targetWeightKg',
+    raw: string
+  ) => {
     const parsed = parseFloat(raw);
     if (Number.isNaN(parsed)) return;
     onUpdateProfile({
@@ -44,15 +47,22 @@ export function WeightGoalSection({
 
   const handleRecordCurrentWeight = (e: React.FormEvent) => {
     e.preventDefault();
-    onAddWeightLog(profile.currentWeightKg, selectedDate, logNote.trim() || undefined);
+    onAddWeightLog(
+      profile.currentWeightKg,
+      selectedDate,
+      logNote.trim() || undefined
+    );
     setLogNote('');
     setSavedFeedback(true);
     window.setTimeout(() => setSavedFeedback(false), 1800);
   };
 
-  // Cálculo de progreso hacia peso objetivo
-  const totalDistance = Math.abs(profile.targetWeightKg - profile.initialWeightKg);
-  const remainingDistance = Math.abs(profile.targetWeightKg - profile.currentWeightKg);
+  const totalDistance = Math.abs(
+    profile.targetWeightKg - profile.initialWeightKg
+  );
+  const remainingDistance = Math.abs(
+    profile.targetWeightKg - profile.currentWeightKg
+  );
   let progressPct = 100;
 
   if (totalDistance > 0.1) {
@@ -65,7 +75,9 @@ export function WeightGoalSection({
     if (!movingRightWay) {
       progressPct = 0;
     } else {
-      const covered = Math.abs(profile.currentWeightKg - profile.initialWeightKg);
+      const covered = Math.abs(
+        profile.currentWeightKg - profile.initialWeightKg
+      );
       progressPct = Math.min(100, Math.round((covered / totalDistance) * 100));
     }
   } else if (remainingDistance > 0.2) {
@@ -75,11 +87,11 @@ export function WeightGoalSection({
   const diffFromGoal =
     Math.round((profile.targetWeightKg - profile.currentWeightKg) * 10) / 10;
 
-  // Ordenar registros cronológicamente para gráfica SVG
-  const sortedLogs = [...weightLogs].sort((a, b) => a.date.localeCompare(b.date));
+  const sortedLogs = [...weightLogs].sort((a, b) =>
+    a.date.localeCompare(b.date)
+  );
   const recentLogs = sortedLogs.slice(-10);
 
-  // Escalado de gráfica SVG
   const allWeightsForScale = [
     ...recentLogs.map((l) => l.weightKg),
     profile.currentWeightKg,
@@ -107,16 +119,16 @@ export function WeightGoalSection({
     <section
       id="peso"
       aria-labelledby="peso-heading"
-      className="bg-white border border-slate-200 rounded-xl overflow-hidden"
+      className="bg-[#111A2E] border border-slate-800 rounded-xl overflow-hidden"
     >
-      <div className="p-6 sm:p-8 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-6 sm:p-8 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-sky-400 font-medium">
             Control antropométrico · Cálculo automático de calorías y macros
           </p>
           <h2
             id="peso-heading"
-            className="mt-1 text-xl font-bold tracking-tight text-slate-900"
+            className="mt-1 text-xl font-bold tracking-tight text-white"
           >
             Peso Corporal y Meta Nutricional
           </h2>
@@ -125,10 +137,14 @@ export function WeightGoalSection({
         <button
           type="button"
           onClick={() => setShowAdvanced((prev) => !prev)}
-          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium text-slate-200 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
         >
-          <SlidersHorizontal className="w-3.5 h-3.5" />
-          <span>{showAdvanced ? 'Ocultar parámetros metabólicos' : 'Ajustar perfil metabólico'}</span>
+          <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-400" />
+          <span>
+            {showAdvanced
+              ? 'Ocultar parámetros metabólicos'
+              : 'Ajustar perfil metabólico'}
+          </span>
         </button>
       </div>
 
@@ -139,7 +155,7 @@ export function WeightGoalSection({
             <div>
               <label
                 htmlFor="current-weight-input"
-                className="block text-xs font-medium text-slate-700 mb-1.5"
+                className="block text-xs font-semibold text-slate-300 mb-1.5"
               >
                 Tu peso actual (kg)
               </label>
@@ -151,10 +167,12 @@ export function WeightGoalSection({
                   min="25"
                   max="350"
                   value={profile.currentWeightKg}
-                  onChange={(e) => handleWeightChange('currentWeightKg', e.target.value)}
-                  className="w-full px-3.5 py-2.5 pr-12 text-lg font-mono font-semibold text-slate-900 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-700 focus:border-teal-700 tabular-nums"
+                  onChange={(e) =>
+                    handleWeightChange('currentWeightKg', e.target.value)
+                  }
+                  className="w-full px-3.5 py-2.5 pr-12 text-lg font-mono font-bold text-white bg-[#0B1120] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 tabular-nums"
                 />
-                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-500">
+                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">
                   kg
                 </span>
               </div>
@@ -163,7 +181,7 @@ export function WeightGoalSection({
             <div>
               <label
                 htmlFor="target-weight-input"
-                className="block text-xs font-medium text-slate-700 mb-1.5"
+                className="block text-xs font-semibold text-emerald-400 mb-1.5"
               >
                 Tu peso objetivo (kg)
               </label>
@@ -175,10 +193,12 @@ export function WeightGoalSection({
                   min="25"
                   max="350"
                   value={profile.targetWeightKg}
-                  onChange={(e) => handleWeightChange('targetWeightKg', e.target.value)}
-                  className="w-full px-3.5 py-2.5 pr-12 text-lg font-mono font-semibold text-teal-800 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-700 focus:border-teal-700 tabular-nums"
+                  onChange={(e) =>
+                    handleWeightChange('targetWeightKg', e.target.value)
+                  }
+                  className="w-full px-3.5 py-2.5 pr-12 text-lg font-mono font-bold text-emerald-400 bg-[#0B1120] border border-emerald-500/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 tabular-nums"
                 />
-                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-500">
+                <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-emerald-400/80">
                   kg
                 </span>
               </div>
@@ -187,28 +207,37 @@ export function WeightGoalSection({
 
           {/* Barra de progreso hacia el peso objetivo */}
           <div className="pt-2 space-y-2.5">
-            <div className="flex items-center justify-between text-xs text-slate-600 font-mono tabular-nums">
+            <div className="flex items-center justify-between text-xs text-slate-400 font-mono tabular-nums">
               <span>Inicial: {profile.initialWeightKg.toFixed(1)} kg</span>
-              <span className="font-sans font-medium text-slate-900">
+              <span className="font-sans font-bold text-lime-300">
                 {Math.abs(diffFromGoal) <= 0.2
                   ? 'En tu peso objetivo'
                   : diffFromGoal < 0
                     ? `Por bajar: ${Math.abs(diffFromGoal).toFixed(1)} kg`
                     : `Por subir: +${diffFromGoal.toFixed(1)} kg`}
               </span>
-              <span>Meta: {profile.targetWeightKg.toFixed(1)} kg</span>
+              <span className="text-emerald-400">
+                Meta: {profile.targetWeightKg.toFixed(1)} kg
+              </span>
             </div>
 
-            <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+            <div className="w-full h-3 bg-slate-900 border border-slate-800 rounded-full overflow-hidden">
               <div
-                className="h-full bg-teal-700 transition-transform duration-200 origin-left"
+                className="h-full bg-gradient-to-r from-sky-500 via-emerald-400 to-lime-400 transition-transform duration-200 origin-left"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
               <span>
-                TMB estimada: <strong className="font-mono text-slate-700 tabular-nums">{summary.bmrCalories} kcal</strong> · Gasto base: <strong className="font-mono text-slate-700 tabular-nums">{summary.tdeeBaseCalories} kcal</strong>
+                TMB estimada:{' '}
+                <strong className="font-mono text-slate-200 tabular-nums">
+                  {summary.bmrCalories} kcal
+                </strong>{' '}
+                · Gasto base:{' '}
+                <strong className="font-mono text-slate-200 tabular-nums">
+                  {summary.tdeeBaseCalories} kcal
+                </strong>
               </span>
               <button
                 type="button"
@@ -218,7 +247,7 @@ export function WeightGoalSection({
                     initialWeightKg: profile.currentWeightKg,
                   })
                 }
-                className="text-teal-700 hover:underline font-medium whitespace-nowrap cursor-pointer"
+                className="text-sky-400 hover:text-sky-300 hover:underline font-medium whitespace-nowrap cursor-pointer"
               >
                 Fijar actual como inicial
               </button>
@@ -228,18 +257,18 @@ export function WeightGoalSection({
           {/* Guardar pesaje en historial */}
           <form
             onSubmit={handleRecordCurrentWeight}
-            className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row gap-2.5"
+            className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-2.5"
           >
             <input
               type="text"
               value={logNote}
               onChange={(e) => setLogNote(e.target.value)}
               placeholder="Nota opcional del pesaje (ej. en ayunas)"
-              className="flex-1 px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-700"
+              className="flex-1 px-3 py-2 text-sm text-white placeholder:text-slate-500 bg-[#0B1120] border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400"
             />
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               {savedFeedback ? (
                 <>
@@ -247,24 +276,27 @@ export function WeightGoalSection({
                   <span>Pesaje guardado</span>
                 </>
               ) : (
-                <span>Guardar pesaje ({profile.currentWeightKg.toFixed(1)} kg)</span>
+                <span>
+                  Guardar pesaje ({profile.currentWeightKg.toFixed(1)} kg)
+                </span>
               )}
             </button>
           </form>
         </div>
 
         {/* Gráfica de evolución e historial reciente */}
-        <div className="lg:col-span-6 lg:border-l lg:border-slate-200 lg:pl-8 space-y-4">
+        <div className="lg:col-span-6 lg:border-l lg:border-slate-800 lg:pl-8 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-900">
+            <h3 className="text-sm font-bold text-white">
               Evolución hacia tu Peso Objetivo
             </h3>
-            <span className="text-xs text-slate-500 font-mono tabular-nums">
-              {sortedLogs.length} {sortedLogs.length === 1 ? 'registro' : 'registros'}
+            <span className="text-xs text-slate-400 font-mono tabular-nums">
+              {sortedLogs.length}{' '}
+              {sortedLogs.length === 1 ? 'registro' : 'registros'}
             </span>
           </div>
 
-          <div className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3">
+          <div className="w-full bg-[#0B1120] border border-slate-800 rounded-lg p-3">
             <svg
               viewBox={`0 0 ${svgWidth} ${svgHeight}`}
               className="w-full h-32 overflow-visible"
@@ -277,7 +309,7 @@ export function WeightGoalSection({
                 y1={targetLineY}
                 x2={svgWidth - padX}
                 y2={targetLineY}
-                stroke="#0f766e"
+                stroke="#34d399"
                 strokeWidth="1.5"
                 strokeDasharray="4 4"
               />
@@ -285,7 +317,7 @@ export function WeightGoalSection({
                 x={svgWidth - padX}
                 y={Math.max(12, targetLineY - 6)}
                 textAnchor="end"
-                className="fill-teal-700 text-[10px] font-mono"
+                className="fill-emerald-400 text-[10px] font-mono"
               >
                 Meta: {profile.targetWeightKg.toFixed(1)} kg
               </text>
@@ -294,10 +326,13 @@ export function WeightGoalSection({
               {recentLogs.length > 1 && (
                 <polyline
                   fill="none"
-                  stroke="#0f172a"
-                  strokeWidth="2"
+                  stroke="#38bdf8"
+                  strokeWidth="2.5"
                   points={recentLogs
-                    .map((entry, idx) => `${getX(idx, recentLogs.length)},${getY(entry.weightKg)}`)
+                    .map(
+                      (entry, idx) =>
+                        `${getX(idx, recentLogs.length)},${getY(entry.weightKg)}`
+                    )
                     .join(' ')}
                 />
               )}
@@ -311,15 +346,15 @@ export function WeightGoalSection({
                     <circle
                       cx={cx}
                       cy={cy}
-                      r="4"
-                      className="fill-white stroke-slate-900"
-                      strokeWidth="2"
+                      r="4.5"
+                      className="fill-[#0B1120] stroke-sky-400"
+                      strokeWidth="2.5"
                     />
                     <text
                       x={cx}
-                      y={cy - 8}
+                      y={cy - 9}
                       textAnchor="middle"
-                      className="fill-slate-700 text-[10px] font-mono"
+                      className="fill-slate-200 text-[10px] font-mono"
                     >
                       {entry.weightKg.toFixed(1)}
                     </text>
@@ -330,40 +365,45 @@ export function WeightGoalSection({
           </div>
 
           {recentLogs.length > 0 && (
-            <div className="max-h-32 overflow-y-auto divide-y divide-slate-100 border-t border-slate-200">
-              {[...recentLogs].reverse().slice(0, 4).map((item) => (
-                <div
-                  key={item.id}
-                  className="py-2 flex items-center justify-between text-xs"
-                >
-                  <div className="flex items-center gap-2 text-slate-600 truncate">
-                    <span className="font-mono text-slate-500 tabular-nums">
-                      {formatSpanishDate(item.date)}
-                    </span>
-                    {item.note && (
-                      <>
-                        <span aria-hidden="true">·</span>
-                        <span className="truncate">{item.note}</span>
-                      </>
-                    )}
+            <div className="max-h-32 overflow-y-auto divide-y divide-slate-800/80 border-t border-slate-800">
+              {[...recentLogs]
+                .reverse()
+                .slice(0, 4)
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    className="py-2 flex items-center justify-between text-xs"
+                  >
+                    <div className="flex items-center gap-2 text-slate-300 truncate">
+                      <span className="font-mono text-slate-400 tabular-nums">
+                        {formatSpanishDate(item.date)}
+                      </span>
+                      {item.note && (
+                        <>
+                          <span className="text-slate-600" aria-hidden="true">
+                            ·
+                          </span>
+                          <span className="truncate">{item.note}</span>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="font-mono font-bold text-sky-400 tabular-nums">
+                        {item.weightKg.toFixed(1)} kg
+                      </span>
+                      {sortedLogs.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => onDeleteWeightLog(item.id)}
+                          className="text-slate-500 hover:text-rose-400 transition-colors cursor-pointer"
+                          aria-label={`Eliminar pesaje del ${item.date}`}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <span className="font-mono font-semibold text-slate-900 tabular-nums">
-                      {item.weightKg.toFixed(1)} kg
-                    </span>
-                    {sortedLogs.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => onDeleteWeightLog(item.id)}
-                        className="text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
-                        aria-label={`Eliminar pesaje del ${item.date}`}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           )}
         </div>
@@ -371,10 +411,10 @@ export function WeightGoalSection({
 
       {/* Panel desplegable de configuración metabólica y ajuste por ejercicio */}
       {showAdvanced && (
-        <div className="px-6 py-6 sm:px-8 bg-slate-50 border-t border-slate-200 space-y-6">
+        <div className="px-6 py-6 sm:px-8 bg-[#0D1526] border-t border-slate-800 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label className="block text-xs font-medium text-slate-300 mb-1">
                 Altura (cm)
               </label>
               <input
@@ -388,12 +428,12 @@ export function WeightGoalSection({
                     heightCm: Number(e.target.value) || 170,
                   })
                 }
-                className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-300 rounded-lg tabular-nums"
+                className="w-full px-3 py-2 text-sm font-mono text-white bg-[#111A2E] border border-slate-700 rounded-lg tabular-nums"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label className="block text-xs font-medium text-slate-300 mb-1">
                 Edad (años)
               </label>
               <input
@@ -407,12 +447,12 @@ export function WeightGoalSection({
                     age: Number(e.target.value) || 30,
                   })
                 }
-                className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-300 rounded-lg tabular-nums"
+                className="w-full px-3 py-2 text-sm font-mono text-white bg-[#111A2E] border border-slate-700 rounded-lg tabular-nums"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label className="block text-xs font-medium text-slate-300 mb-1">
                 Sexo biológico (fórmula TMB)
               </label>
               <select
@@ -423,7 +463,7 @@ export function WeightGoalSection({
                     sex: e.target.value as BiologicalSex,
                   })
                 }
-                className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg"
+                className="w-full px-3 py-2 text-sm text-white bg-[#111A2E] border border-slate-700 rounded-lg"
               >
                 <option value={BiologicalSex.MASCULINO}>Masculino</option>
                 <option value={BiologicalSex.FEMENINO}>Femenino</option>
@@ -431,7 +471,7 @@ export function WeightGoalSection({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label className="block text-xs font-medium text-slate-300 mb-1">
                 Actividad diaria sin ejercicio
               </label>
               <select
@@ -442,7 +482,7 @@ export function WeightGoalSection({
                     baselineActivity: e.target.value as BaselineActivity,
                   })
                 }
-                className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg"
+                className="w-full px-3 py-2 text-sm text-white bg-[#111A2E] border border-slate-700 rounded-lg"
               >
                 <option value={BaselineActivity.SEDENTARIO}>
                   Sedentario (oficina)
@@ -457,7 +497,7 @@ export function WeightGoalSection({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label className="block text-xs font-medium text-slate-300 mb-1">
                 Ritmo hacia peso objetivo
               </label>
               <select
@@ -468,7 +508,7 @@ export function WeightGoalSection({
                     goalPace: e.target.value as GoalPace,
                   })
                 }
-                className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg"
+                className="w-full px-3 py-2 text-sm text-white bg-[#111A2E] border border-slate-700 rounded-lg"
               >
                 <option value={GoalPace.SUAVE}>Suave (±250 kcal)</option>
                 <option value={GoalPace.ESTANDAR}>Estándar (±450 kcal)</option>
@@ -477,17 +517,17 @@ export function WeightGoalSection({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="pt-4 border-t border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="space-y-1">
-              <p className="text-xs font-semibold text-slate-800">
+              <p className="text-xs font-semibold text-white">
                 Ajuste de ingesta calórica recomendada según actividad física
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-400">
                 Define qué porcentaje de las calorías quemadas en ejercicio se suma automáticamente a tu meta diaria.
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-200/80 rounded-lg self-start">
+            <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-900 border border-slate-800 rounded-lg self-start">
               {[
                 { label: '100% (Total)', value: 1 },
                 { label: '75% (Moderado)', value: 0.75 },
@@ -503,10 +543,10 @@ export function WeightGoalSection({
                       exerciseCalorieAdjustmentRatio: opt.value,
                     })
                   }
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                     profile.exerciseCalorieAdjustmentRatio === opt.value
-                      ? 'bg-white text-slate-900 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-emerald-400 text-slate-950'
+                      : 'text-slate-300 hover:text-white'
                   }`}
                 >
                   {opt.label}
@@ -516,8 +556,8 @@ export function WeightGoalSection({
           </div>
 
           {/* Opción de metas manuales personalizadas */}
-          <div className="pt-4 border-t border-slate-200 space-y-4">
-            <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-800 cursor-pointer">
+          <div className="pt-4 border-t border-slate-800 space-y-4">
+            <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-200 cursor-pointer">
               <input
                 type="checkbox"
                 checked={profile.useManualTargets}
@@ -527,7 +567,7 @@ export function WeightGoalSection({
                     useManualTargets: e.target.checked,
                   })
                 }
-                className="rounded border-slate-300 text-teal-700 focus:ring-teal-700"
+                className="rounded border-slate-600 bg-slate-900 text-emerald-400 focus:ring-emerald-400"
               />
               <span>Definir mis calorías y macronutrientes base manualmente</span>
             </label>
@@ -535,7 +575,7 @@ export function WeightGoalSection({
             {profile.useManualTargets && (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-xs text-slate-600 mb-1">
+                  <label className="block text-xs text-emerald-400 mb-1">
                     Calorías base (kcal)
                   </label>
                   <input
@@ -549,11 +589,11 @@ export function WeightGoalSection({
                         manualBaseCalories: Number(e.target.value) || 2000,
                       })
                     }
-                    className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-300 rounded-lg tabular-nums"
+                    className="w-full px-3 py-2 text-sm font-mono text-white bg-[#111A2E] border border-slate-700 rounded-lg tabular-nums"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-600 mb-1">
+                  <label className="block text-xs text-orange-400 mb-1">
                     Carbohidratos base (g)
                   </label>
                   <input
@@ -567,11 +607,11 @@ export function WeightGoalSection({
                         manualCarbsGrams: Number(e.target.value) || 0,
                       })
                     }
-                    className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-300 rounded-lg tabular-nums"
+                    className="w-full px-3 py-2 text-sm font-mono text-white bg-[#111A2E] border border-slate-700 rounded-lg tabular-nums"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-600 mb-1">
+                  <label className="block text-xs text-sky-400 mb-1">
                     Proteínas base (g)
                   </label>
                   <input
@@ -585,11 +625,11 @@ export function WeightGoalSection({
                         manualProteinGrams: Number(e.target.value) || 0,
                       })
                     }
-                    className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-300 rounded-lg tabular-nums"
+                    className="w-full px-3 py-2 text-sm font-mono text-white bg-[#111A2E] border border-slate-700 rounded-lg tabular-nums"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-600 mb-1">
+                  <label className="block text-xs text-amber-400 mb-1">
                     Grasas base (g)
                   </label>
                   <input
@@ -603,7 +643,7 @@ export function WeightGoalSection({
                         manualFatGrams: Number(e.target.value) || 0,
                       })
                     }
-                    className="w-full px-3 py-2 text-sm font-mono bg-white border border-slate-300 rounded-lg tabular-nums"
+                    className="w-full px-3 py-2 text-sm font-mono text-white bg-[#111A2E] border border-slate-700 rounded-lg tabular-nums"
                   />
                 </div>
               </div>

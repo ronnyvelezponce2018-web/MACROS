@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Link2, RotateCcw } from 'lucide-react';
 import { ActivityTrackerSection } from './components/ActivityTrackerSection';
 import { EnergySummary } from './components/EnergySummary';
 import { MealTrackerSection } from './components/MealTrackerSection';
@@ -27,6 +27,9 @@ import {
   roundMacro,
   shiftDateISO,
 } from './utils/calculations';
+
+const PUBLIC_APP_URL =
+  'https://ais-pre-z6kzpv5di4fycbo4o5jpbd-323257412942.us-west1.run.app/index.html';
 
 const STORAGE_KEYS = {
   PROFILE: 'nutribalance_profile_v1',
@@ -139,7 +142,10 @@ function createInitialMeals(todayISO: string): LoggedMeal[] {
   ];
 }
 
-function createInitialExercises(todayISO: string, weightKg: number): LoggedExercise[] {
+function createInitialExercises(
+  todayISO: string,
+  weightKg: number
+): LoggedExercise[] {
   const met = 5.0;
   const durationMinutes = 45;
   return [
@@ -195,6 +201,7 @@ function loadJSON<T>(key: string, fallback: () => T): T {
 export default function App() {
   const todayISO = useMemo(() => getLocalTodayISO(), []);
   const [selectedDate, setSelectedDate] = useState<string>(todayISO);
+  const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
   const [profile, setProfile] = useState<UserNutritionProfile>(() =>
     loadJSON(STORAGE_KEYS.PROFILE, () => DEFAULT_PROFILE)
@@ -224,7 +231,6 @@ export default function App() {
 
   const foodSearchInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Persistencia automática en localStorage
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(profile));
   }, [profile]);
@@ -234,7 +240,10 @@ export default function App() {
   }, [meals]);
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEYS.EXERCISES, JSON.stringify(exercises));
+    window.localStorage.setItem(
+      STORAGE_KEYS.EXERCISES,
+      JSON.stringify(exercises)
+    );
   }, [exercises]);
 
   useEffect(() => {
@@ -285,7 +294,6 @@ export default function App() {
     [profile, mealsForSelectedDate, exercisesForSelectedDate]
   );
 
-  // Handlers de Comidas
   const handleAddMeal = (newMeal: Omit<LoggedMeal, 'id' | 'createdAt'>) => {
     const created: LoggedMeal = {
       ...newMeal,
@@ -349,7 +357,6 @@ export default function App() {
     setCustomFoods((prev) => [food, ...prev]);
   };
 
-  // Handlers de Actividad Física
   const handleAddExercise = (
     newEx: Omit<LoggedExercise, 'id' | 'createdAt'>
   ) => {
@@ -365,7 +372,6 @@ export default function App() {
     setExercises((prev) => prev.filter((e) => e.id !== id));
   };
 
-  // Handlers de Peso
   const handleAddWeightLog = (
     weightKg: number,
     date: string,
@@ -402,15 +408,30 @@ export default function App() {
     }, 350);
   };
 
+  const handleCopyLink = async () => {
+    try {
+      const urlToCopy =
+        typeof window !== 'undefined' && window.location?.origin
+          ? `${window.location.origin}/index.html`
+          : PUBLIC_APP_URL;
+      await navigator.clipboard.writeText(urlToCopy);
+      setCopiedLink(true);
+      window.setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      setCopiedLink(true);
+      window.setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-[#0B1120] text-slate-100">
       {/* Top Bar Contract: Exactamente 3 zonas separadas por gap-8 */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xs border-b border-slate-200">
+      <header className="sticky top-0 z-30 bg-[#0B1120]/95 backdrop-blur-md border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-8 px-4 sm:px-6 lg:px-8 py-3.5">
-          {/* Zona 1: Marca en una sola línea sin subtítulos */}
+          {/* Zona 1: Marca en una sola línea */}
           <a
             href="#resumen"
-            className="text-lg font-bold tracking-tight text-slate-900 whitespace-nowrap shrink-0"
+            className="text-lg font-extrabold tracking-tight text-emerald-400 whitespace-nowrap shrink-0"
           >
             NutriBalance
           </a>
@@ -418,46 +439,46 @@ export default function App() {
           {/* Zona 2: 5 enlaces de navegación limpios en una sola línea */}
           <nav
             aria-label="Navegación principal"
-            className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600"
+            className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300"
           >
             <a
               href="#resumen"
-              className="hover:text-slate-900 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+              className="hover:text-emerald-400 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
             >
               Resumen
             </a>
             <a
               href="#peso"
-              className="hover:text-slate-900 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+              className="hover:text-sky-400 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
             >
               Peso y Meta
             </a>
             <a
               href="#comidas"
-              className="hover:text-slate-900 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+              className="hover:text-emerald-400 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
             >
               Comidas
             </a>
             <a
               href="#actividad"
-              className="hover:text-slate-900 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+              className="hover:text-orange-400 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
             >
               Actividad Física
             </a>
             <a
               href="#plan-semanal"
-              className="hover:text-slate-900 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+              className="hover:text-amber-400 hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
             >
               Plan Semanal
             </a>
           </nav>
 
-          {/* Zona 3: 1 acción primaria */}
+          {/* Zona 3: 1 acción primaria vibrante */}
           <div className="flex items-center shrink-0">
             <button
               type="button"
               onClick={scrollToMealInput}
-              className="px-4 py-2 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+              className="px-4 py-2 text-xs font-bold text-slate-950 bg-emerald-400 hover:bg-emerald-300 rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer"
             >
               Registrar Comida
             </button>
@@ -468,24 +489,24 @@ export default function App() {
       {/* Contenedor Principal del Espacio de Trabajo */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8">
         {/* Barra de control de fecha del diario nutricional */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-800">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center bg-white border border-slate-200 rounded-lg p-1">
+            <div className="inline-flex items-center bg-[#111A2E] border border-slate-800 rounded-lg p-1">
               <button
                 type="button"
                 onClick={() => setSelectedDate((d) => shiftDateISO(d, -1))}
-                className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors cursor-pointer"
+                className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
                 aria-label="Día anterior"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="px-3 text-sm font-medium text-slate-900 whitespace-nowrap">
+              <span className="px-3 text-sm font-semibold text-white whitespace-nowrap">
                 {formatSpanishDate(selectedDate)}
               </span>
               <button
                 type="button"
                 onClick={() => setSelectedDate((d) => shiftDateISO(d, 1))}
-                className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors cursor-pointer"
+                className="p-1.5 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md transition-colors cursor-pointer"
                 aria-label="Día siguiente"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -499,14 +520,14 @@ export default function App() {
                 if (e.target.value) setSelectedDate(e.target.value);
               }}
               aria-label="Seleccionar fecha específica"
-              className="px-3 py-1.5 text-xs font-mono text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-700 tabular-nums"
+              className="px-3 py-1.5 text-xs font-mono text-slate-200 bg-[#111A2E] border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 tabular-nums"
             />
 
             {selectedDate !== todayISO && (
               <button
                 type="button"
                 onClick={() => setSelectedDate(todayISO)}
-                className="px-3 py-1.5 text-xs font-medium text-teal-700 hover:underline whitespace-nowrap cursor-pointer"
+                className="px-3 py-1.5 text-xs font-semibold text-emerald-400 hover:underline whitespace-nowrap cursor-pointer"
               >
                 Volver a hoy
               </button>
@@ -518,7 +539,7 @@ export default function App() {
             <button
               type="button"
               onClick={handleClearCurrentDay}
-              className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-red-600 transition-colors self-start sm:self-auto whitespace-nowrap cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-400 transition-colors self-start sm:self-auto whitespace-nowrap cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Vaciar registros de esta fecha</span>
@@ -575,24 +596,37 @@ export default function App() {
         />
       </main>
 
-      {/* Pie de página limpio sin telemetría falsa */}
-      <footer className="mt-12 border-t border-slate-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-slate-500">
+      {/* Pie de página limpio con enlace directo a index.html */}
+      <footer className="mt-12 border-t border-slate-800 bg-[#0D1526]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-slate-400">
           <p>
             NutriBalance · Control diario de peso corporal, macronutrientes, actividad física y planificación semanal.
           </p>
-          <div className="flex items-center gap-4">
-            <a href="#resumen" className="hover:text-slate-900 transition-colors">
-              Resumen diario
+          <div className="flex flex-wrap items-center gap-4">
+            <a
+              href="/index.html"
+              className="text-emerald-400 hover:underline font-medium whitespace-nowrap"
+            >
+              Enlace directo (index.html)
             </a>
             <span aria-hidden="true">·</span>
-            <a href="#comidas" className="hover:text-slate-900 transition-colors">
-              Comidas
-            </a>
-            <span aria-hidden="true">·</span>
-            <a href="#plan-semanal" className="hover:text-slate-900 transition-colors">
-              Plan semanal
-            </a>
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="inline-flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors whitespace-nowrap cursor-pointer"
+            >
+              {copiedLink ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-emerald-400">Enlace copiado</span>
+                </>
+              ) : (
+                <>
+                  <Link2 className="w-3.5 h-3.5" />
+                  <span>Copiar link</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       </footer>
